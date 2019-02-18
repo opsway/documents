@@ -17,3 +17,6 @@
 public/assets
 public/index.json
 server
+coverage.out
+coverage-all.html
+coverage-all.out
