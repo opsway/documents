@@ -12,3 +12,7 @@ jobs:
   include:
     - stage: qa
       script: make test-in-docker
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - curl -XPOST https://goreportcard.com/checks -F 'repo=github.com/opsway/documents
