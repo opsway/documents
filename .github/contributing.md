@@ -32,7 +32,7 @@ git commit -am "type: description"
 git push origin my-new-feature
 ```
 
-`4` Create a new pull request by visiting `https://github.com/opsway/documents/pull/new/docs-and-license`.
+`4` Create a new pull request by visiting `https://github.com/opsway/documents/pull/new/my-new-feature`.
 
 ### Testing
 
