@@ -1,33 +1,75 @@
-#!/usr/bin/env bash
+GOLANG_VERSION?=1.11.5
+REGISTRY?=quay.io/opsway
 
-# Where to push the docker image
-REGISTRY?="quay.io/opsway"
+BIN:=$(shell basename "$(PWD)")
+REPO:=$(REGISTRY)/$(BIN)
 
-# The binary to build
-BIN := "$(shell basename "$(PWD)")"
+DATE:=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+GIT_SHA1:=$(shell git log -n 1 --pretty=format:%H)
+VERSION:=$(shell git describe --tags --always --dirty)
 
-IMAGE := "$(REGISTRY)/$(BIN)"
+### These variables should not need tweaking.
 
-DATE := "$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")"
-GIT_SHA1 := "$(shell git log -n 1 --pretty=format:%H)"
+SRC_DIRS:=cmd pkg # directories which hold app source (not vendored)
+OS:=$(if $(GOOS),$(GOOS),$(shell go env GOOS))
+ARCH:=$(if $(GOARCH),$(GOARCH),$(shell go env GOARCH))
 
-.DEFAULT_GOAL := build
+TAG:=$(VERSION)
+IMAGE_BASE:=$(REPO):base
+IMAGE_TEST:=$(REPO):test
+IMAGE_PACKAGE:=$(REPO):$(TAG)
 
-t:
-	@echo $(DATE)
-	@echo $(GIT_SHA1)
-fmt:
+.DEFAULT_GOAL:=help
+
+help: # Output usage documentation
+	@echo "Usage: make <target>"
+	@echo " "
+	@echo "Commands:"
+	@echo " "
+	@@grep -E '^[a-z\-]+' $(MAKEFILE_LIST)
+	@echo " "
+
+fmt: # gofmt and goimports all go files
 	 go fmt ./...
 
-test: fmt
+image-base: # build base image
+	docker build \
+		--tag $(IMAGE_BASE) \
+		--file build/base/Dockerfile .
+
+image-test: image-base # build test image
+	docker build \
+		--build-arg GOLANG_VERSION=$(GOLANG_VERSION) \
+		--build-arg IMAGE_BASE=$(IMAGE_BASE) \
+		--tag $(IMAGE_TEST) \
+		--file build/test/Dockerfile .
+
+image-package: docs # build package image
+	docker build \
+		--no-cache \
+		--build-arg GOLANG_VERSION=$(GOLANG_VERSION) \
+		--build-arg IMAGE_BASE=$(IMAGE_BASE) \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_DATE=$(DATE) \
+		--build-arg VCS_REF=$(GIT_SHA1) \
+		--tag $(IMAGE_PACKAGE) \
+		--file build/package/Dockerfile .
+
+test-in-docker: image-test # run all tests
+	docker run \
+		--rm \
+		--interactive \
+		--tty \
+		--volume "$(PWD):/src" \
+		$(IMAGE_TEST) \
+		make test
+
+test: # run all tests
 	 go test ./...
 
 clean:
 	rm -fr public/index.json
 	rm -fr server
-
-go-build: test
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -extldflags "-static"' -o server .
 
 public/assets: # assets build
 	mkdir -p public/assets
@@ -37,16 +79,30 @@ public/assets: # assets build
 	curl https://raw.githubusercontent.com/swagger-api/swagger-ui/v3.20.6/dist/swagger-ui-bundle.js --output public/assets/swagger-ui-bundle.js
 	curl https://raw.githubusercontent.com/swagger-api/swagger-ui/v3.20.6/dist/swagger-ui-standalone-preset.js --output public/assets/swagger-ui-standalone-preset.js
 
-swagger-generate:
+swagger-generate: public/assets
 	swagger generate spec --output=public/index.json
 
 docs: public/assets swagger-generate
 
-start: go-build
-	documents -addr 8080
+start:
+	docker run \
+		--rm \
+		--publish 8515:8515 \
+		$(IMAGE_PACKAGE)
 
-build: clean go-build docs # image build
-	docker build --build-arg BUILD_DATE="$(DATE)" --build-arg VCS_REF="$(GIT_SHA1)" --tag "$(IMAGE)" .
+build: image-package # image build
 
 publish: build # image publish
-	docker push "$(IMAGE)"
+	docker push $(IMAGE_PACKAGE)
+
+say-image-name:
+	@echo "image: $(IMAGE_PACKAGE)"
+
+say-image-labels:
+	@docker inspect \
+		$(IMAGE_PACKAGE) \
+		| jq .[0].Config.Labels
+
+say-image-history:
+	@docker history \
+		$(IMAGE_PACKAGE)

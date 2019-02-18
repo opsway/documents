@@ -1,0 +1,14 @@
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+stages:
+  - qa
+
+jobs:
+  include:
+    - stage: qa
+      script: make test-in-docker
