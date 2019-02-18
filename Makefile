@@ -84,7 +84,8 @@ public/assets: # assets build
 	curl https://raw.githubusercontent.com/swagger-api/swagger-ui/v3.20.6/dist/swagger-ui-standalone-preset.js --output public/assets/swagger-ui-standalone-preset.js
 
 swagger-generate: public/assets
-	swagger generate spec --output=public/index.json
+#	swagger generate spec --output=public/index.json
+# FIXME #6
 
 docs: public/assets swagger-generate
 
