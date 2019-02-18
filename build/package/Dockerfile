@@ -36,6 +36,8 @@ COPY --from=golang /src/entrypoint /app/entrypoint
 WORKDIR /app
 
 ENV \
+    DOCUMENTS_PUBLIC_PATH=/app/public \
+    DOCUMENTS_TEMPLATES=/app/templates \
     DOCUMENTS_PORT=8515
 
 EXPOSE ${DOCUMENTS_PORT}
