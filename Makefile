@@ -10,9 +10,7 @@ VERSION:=$(shell git describe --tags --always --dirty)
 
 ### These variables should not need tweaking.
 
-SRC_DIRS:=cmd pkg # directories which hold app source (not vendored)
-OS:=$(if $(GOOS),$(GOOS),$(shell go env GOOS))
-ARCH:=$(if $(GOARCH),$(GOARCH),$(shell go env GOARCH))
+PKGS:= $(shell go list ./...)
 
 TAG:=$(VERSION)
 IMAGE_BASE:=$(REPO):base
@@ -65,7 +63,13 @@ test-in-docker: image-test # run all tests
 		make test
 
 test: # run all tests
-	 go test ./...
+	@echo ">> TEST: coverage on"
+	@echo "mode: count" > coverage-all.out
+	@$(foreach pkg, $(PKGS),\
+	    echo -n "     ";\
+		go test -coverprofile=coverage.out -covermode=atomic $(pkg) || exit 1;\
+		tail -n +2 coverage.out >> coverage-all.out;)
+	@go tool cover -html=coverage-all.out -o coverage-all.html
 
 clean:
 	rm -fr public/index.json
