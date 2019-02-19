@@ -32,12 +32,17 @@ git commit -am "type: description"
 git push origin my-new-feature
 ```
 
-`4` Create a new pull request by visiting `https://github.com/opsway/documents/pull/new/my-new-feature`.
+`4` See `Your recently pushed branches` on page [Pull requests](../../../pulls).
 
 ### Testing
 
-1. Run all linters (`make lint`)
-2. Run all tests (`make tests`)
+Run all tests:
+
+```bash
+make test
+# or
+make test-in-docker
+```
 
 ## Reporting bugs and feature request
 
@@ -49,6 +54,5 @@ add a new one!
 
 ## Additional resources
 
+* [Get started issue](../../../issues/new/choose)
 * [Code of conduct](code_of_conduct.md)
-* [Issue template](issue_template.md)
-* [Pull request template](pull_request_template.md)
