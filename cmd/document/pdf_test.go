@@ -43,6 +43,7 @@ func TestPdf(t *testing.T) {
 	Convey("RenderByTemplate", t, func() {
 		_ = template.BuildTemplates("../../tests")
 		pdf, _ := NewPdf()
+		pdf.SetOptions(Document{})
 
 		Convey("error template", func() {
 			var actual bytes.Buffer
