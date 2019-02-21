@@ -53,7 +53,7 @@ func (pdf *Pdf) RenderByContent(writer io.Writer, content string) error {
 	return pdf.Render(writer)
 }
 
-func (pdf *Pdf) RenderByTemplate(writer io.Writer, templateName string, data template.TemplateData) error {
+func (pdf *Pdf) RenderByTemplate(writer io.Writer, templateName string, data template.Context) error {
 	tmpl, err := template.GetTemplate(templateName)
 
 	if err != nil {

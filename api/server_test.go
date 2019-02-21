@@ -11,7 +11,7 @@ import (
 
 func TestApi(t *testing.T) {
 	srv := httptest.NewServer(NewHandler(Config{
-		TemplatesPath: "../tests",
+		TemplatesPath: "../testdata/goodTemplates",
 		PublicPath:    "../public",
 	}))
 

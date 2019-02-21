@@ -9,9 +9,9 @@ import (
 )
 
 type RenderTemplateRequest struct {
-	TemplateName    string                `json:"templateName"`
-	Data            template.TemplateData `json:"data"`
-	DocumentOptions document.Document     `json:"documentOptions"`
+	TemplateName    string            `json:"templateName"`
+	Data            template.Context  `json:"data"`
+	DocumentOptions document.Document `json:"documentOptions"`
 }
 
 func RenderTemplate(w http.ResponseWriter, r *http.Request) {

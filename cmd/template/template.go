@@ -10,9 +10,9 @@ import (
 	"github.com/flosch/pongo2"
 )
 
-var Templates map[string]*Template
+var templates map[string]*Template
 
-type TemplateData map[string]interface{}
+type Context map[string]interface{}
 
 type Template struct {
 	path    string
@@ -21,18 +21,22 @@ type Template struct {
 	Context map[string]interface{}
 }
 
-func (tmpl *Template) Render(data TemplateData, writer io.Writer) error {
-	return tmpl.index.ExecuteWriter(pongo2.Context(data), writer)
+func (tmpl *Template) Render(context Context, writer io.Writer) error {
+	return tmpl.index.ExecuteWriter(pongo2.Context(context), writer)
 }
 
-func (tmpl *Template) loadTemplate() error {
+func (tmpl *Template) load() error {
 	_, err := os.Stat(tmpl.path)
 
 	if os.IsNotExist(err) {
 		return err
 	}
 
-	tmpl.index, _ = pongo2.FromFile(tmpl.path)
+	tmpl.index, err = pongo2.FromFile(tmpl.path)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -41,11 +45,16 @@ func NewTemplate(path string, name string) (*Template, error) {
 	path = filepath.Join(path, name, "index.html")
 	tmpl := &Template{path: path, name: name}
 
-	return tmpl, tmpl.loadTemplate()
+	err := tmpl.load()
+	if err != nil {
+		return nil, err
+	}
+
+	return tmpl, nil
 }
 
 func GetTemplate(name string) (*Template, error) {
-	tmpl, exists := Templates[name]
+	tmpl, exists := templates[name]
 	if !exists {
 		return nil, fmt.Errorf("template '%s' is not exist", name)
 
@@ -61,15 +70,15 @@ func BuildTemplates(path string) error {
 		return fmt.Errorf("failed to read templates dir '%s'", path)
 	}
 
-	Templates = make(map[string]*Template)
+	templates = make(map[string]*Template)
 
 	for _, file := range files {
 		if file.IsDir() && file.Name()[0] != '.' {
-			t, err := NewTemplate(path, file.Name())
+			tmpl, err := NewTemplate(path, file.Name())
 			if err != nil {
 				return err
 			}
-			Templates[file.Name()] = t
+			templates[file.Name()] = tmpl
 		}
 	}
 
