@@ -14,7 +14,7 @@ func TestOs(t *testing.T) {
 	})
 
 	Convey("IsValidDir", t, func() {
-		So(IsValidDir("../tests"), ShouldBeTrue)
+		So(IsValidDir("../testdata"), ShouldBeTrue)
 		So(IsValidDir("tests"), ShouldBeFalse)
 	})
 }
