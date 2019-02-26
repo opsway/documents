@@ -1,0 +1,39 @@
+ARG DEVELOP_IMAGE
+ARG BASE_IMAGE
+
+FROM ${DEVELOP_IMAGE} AS build
+
+COPY . .
+RUN make entrypoint
+
+FROM ${BASE_IMAGE}
+
+COPY public/ /app/public
+COPY --from=build /src/entrypoint /app/entrypoint
+
+WORKDIR /app
+
+ENV \
+    LC_ALL=en_US.UTF-8 \
+    DOCUMENTS_PUBLIC_PATH=/app/public \
+    DOCUMENTS_TEMPLATES=/app/templates \
+    DOCUMENTS_PORT=8515
+
+EXPOSE ${DOCUMENTS_PORT}
+
+CMD ["/app/entrypoint"]
+
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+
+# Build-time metadata as defined at http://label-schema.org
+LABEL org.label-schema.build-date=${BUILD_DATE} \
+      org.label-schema.name="documents" \
+      org.label-schema.description="Service stateless API for converting HTML documents to PDF" \
+      org.label-schema.url="https://opsway.github.io/documents" \
+      org.label-schema.vcs-ref=${VCS_REF} \
+      org.label-schema.vcs-url="https://github.com/opsway/documents" \
+      org.label-schema.vendor="OpsWay" \
+      org.label-schema.version=${VERSION} \
+      org.label-schema.schema-version="1.0"
