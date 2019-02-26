@@ -69,7 +69,7 @@ var routes = Routes{
 	// produces:
 	// - application/pdf
 	// parameters:
-	// - name: url
+	// - name: content
 	//   in: query
 	//   description: Content URL for render
 	//   required: true
