@@ -1,0 +1,27 @@
+FROM alpine:3.9
+
+RUN apk add --update --no-cache wkhtmltopdf>=0.12.5
+RUN apk add --update --no-cache msttcorefonts-installer fontconfig \
+    ttf-dejavu \
+    ttf-droid \
+    ttf-freefont \
+    ttf-liberation \
+    ttf-ubuntu-font-family \
+    ttf-linux-libertine && \ 
+    update-ms-fonts && \
+    fc-cache -f
+
+ARG BUILD_DATE
+ARG VERSION
+ARG VCS_REF
+
+# Build-time metadata as defined at http://label-schema.org
+LABEL org.label-schema.build-date=${BUILD_DATE} \
+      org.label-schema.name="documents:wkhtml" \
+      org.label-schema.description="The dockerize wkhtmltopdf and wkhtmltoimage are open source (LGPLv3) command line tools to render HTML into PDF and various image formats" \
+      org.label-schema.url="https://opsway.github.io/documents" \
+      org.label-schema.vcs-ref=${VCS_REF} \
+      org.label-schema.vcs-url="https://github.com/opsway/documents" \
+      org.label-schema.vendor="OpsWay" \
+      org.label-schema.version=${VERSION} \
+      org.label-schema.schema-version="1.0"

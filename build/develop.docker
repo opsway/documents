@@ -1,0 +1,50 @@
+ARG GOLANG_VERSION
+ARG IMAGE_BASE
+FROM golang:${GOLANG_VERSION}-alpine AS golang
+FROM ${IMAGE_BASE}
+
+# Libraries used in the build process of this image.
+RUN apk add --update --no-cache \
+        build-base \
+        bash \
+        curl \
+        gawk \
+        jq \
+        git
+
+# change default shell from ash to bash
+RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
+
+# install swagger tool
+RUN url=$(curl -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | \
+        jq -r '.assets[] | select(.name | contains("'"$(uname | tr '[:upper:]' '[:lower:]')"'_amd64")) | .browser_download_url') && \
+        curl -o /usr/local/bin/swagger -L'#' "${url}" && \
+        chmod +x /usr/local/bin/swagger
+
+# Installs Golang.
+COPY --from=golang /usr/local/go /usr/local/go
+
+ENV \
+    LC_ALL=en_US.UTF-8 \
+    PATH=/usr/local/go/bin:$PATH \
+    GOPATH=/go
+    
+#RUN echo -e "PATH=/usr/local/go/bin:$PATH\nGOPATH=/go" > /etc/profile.d/go.sh
+
+# Define our workding outside of $GOPATH (we're using go modules).
+WORKDIR /src
+
+ARG BUILD_DATE
+ARG VERSION
+ARG VCS_REF
+
+# Build-time metadata as defined at http://label-schema.org
+LABEL org.label-schema.build-date=${BUILD_DATE} \
+      org.label-schema.name="documents:develop" \
+      org.label-schema.description="Develop mode of service stateless API for render HTML into PDF" \
+      org.label-schema.url="https://opsway.github.io/documents" \
+      org.label-schema.vcs-ref=${VCS_REF} \
+      org.label-schema.vcs-url="https://github.com/opsway/documents" \
+      org.label-schema.vendor="OpsWay" \
+      org.label-schema.version=${VERSION} \
+      org.label-schema.schema-version="1.0"
