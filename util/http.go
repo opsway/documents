@@ -7,7 +7,8 @@ import (
 	"net/url"
 )
 
-func GetUrl(url string) (io.Reader, error) {
+// GetURL returns response body of url
+func GetURL(url string) (io.Reader, error) {
 	response, err := http.Get(url)
 
 	if err != nil {
@@ -21,7 +22,8 @@ func GetUrl(url string) (io.Reader, error) {
 	return response.Body, nil
 }
 
-func IsValidUrl(content string) bool {
+// IsValidURL indicate validate raw url
+func IsValidURL(content string) bool {
 	_, err := url.ParseRequestURI(content)
 
 	if err != nil {

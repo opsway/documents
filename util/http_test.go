@@ -1,34 +1,35 @@
 package util
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestUtil(t *testing.T) {
 
-	Convey("GetUrl", t, func() {
+	Convey("GetURL", t, func() {
 		Convey("empty", func() {
-			_, err := GetUrl("")
+			_, err := GetURL("")
 			So(err, ShouldNotBeNil)
 		})
 		Convey("error status", func() {
-			_, err := GetUrl("https://github.com/opsway/documents/foo")
+			_, err := GetURL("https://github.com/opsway/documents/foo")
 			So(err, ShouldNotBeNil)
 		})
 		Convey("content", func() {
-			actual, err := GetUrl("https://github.com/opsway")
+			actual, err := GetURL("https://github.com/opsway")
 			So(err, ShouldBeNil)
 			So(actual, ShouldNotBeNil)
 		})
 	})
 
-	Convey("IsValidUrl", t, func() {
+	Convey("IsValidURL", t, func() {
 		Convey("empty", func() {
-			So(IsValidUrl(""), ShouldBeFalse)
+			So(IsValidURL(""), ShouldBeFalse)
 		})
 		Convey("valid", func() {
-			So(IsValidUrl("https://opsway.com"), ShouldBeTrue)
+			So(IsValidURL("https://opsway.com"), ShouldBeTrue)
 		})
 	})
 }

@@ -1,5 +1,6 @@
 package document
 
+// Document refers the information of page viewing
 type Document struct {
 	Orientation  string `json:"orientation"`
 	PageSize     string `json:"pageSize"`

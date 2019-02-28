@@ -8,12 +8,14 @@ import (
 	"github.com/opsway/documents/cmd/template"
 )
 
+// RenderTemplateRequest refers request of rendering pdf
 type RenderTemplateRequest struct {
 	TemplateName    string            `json:"templateName"`
 	Data            template.Context  `json:"data"`
 	DocumentOptions document.Document `json:"documentOptions"`
 }
 
+// RenderTemplate render pdf by template from request
 func RenderTemplate(w http.ResponseWriter, r *http.Request) {
 	request := RenderTemplateRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)

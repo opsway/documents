@@ -6,7 +6,8 @@ import (
 	"github.com/opsway/documents/cmd/document"
 )
 
-func HtmlToPdfGet(w http.ResponseWriter, r *http.Request) {
+// HTMLToPdfGet renders pdf from html
+func HTMLToPdfGet(w http.ResponseWriter, r *http.Request) {
 	content := r.URL.Query().Get("content")
 
 	if content == "" {

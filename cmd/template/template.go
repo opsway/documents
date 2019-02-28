@@ -12,8 +12,10 @@ import (
 
 var templates map[string]*Template
 
+// Context refers various context of templates
 type Context map[string]interface{}
 
+// Template refers the pongo2 template data
 type Template struct {
 	path    string
 	name    string
@@ -21,6 +23,7 @@ type Template struct {
 	Context map[string]interface{}
 }
 
+// Render outputs the templates to writer
 func (tmpl *Template) Render(context Context, writer io.Writer) error {
 	return tmpl.index.ExecuteWriter(pongo2.Context(context), writer)
 }
@@ -41,6 +44,7 @@ func (tmpl *Template) load() error {
 	return nil
 }
 
+// NewTemplate generates template specified file path and name
 func NewTemplate(path string, name string) (*Template, error) {
 	path = filepath.Join(path, name, "index.html")
 	tmpl := &Template{path: path, name: name}
@@ -53,6 +57,7 @@ func NewTemplate(path string, name string) (*Template, error) {
 	return tmpl, nil
 }
 
+// GetTemplate returns template specified by name
 func GetTemplate(name string) (*Template, error) {
 	tmpl, exists := templates[name]
 	if !exists {
@@ -63,6 +68,7 @@ func GetTemplate(name string) (*Template, error) {
 	return tmpl, nil
 }
 
+// BuildTemplates makes templates which is specified by file path
 func BuildTemplates(path string) error {
 	files, err := ioutil.ReadDir(path)
 
