@@ -1,4 +1,4 @@
-// Documents generation API
+// Package api refers to pdf converter API
 //
 //     BasePath: /
 //     Version: 1.0
@@ -24,6 +24,7 @@ import (
 	"github.com/opsway/documents/cmd/template"
 )
 
+// Route is a structure of entry point
 type Route struct {
 	Name        string
 	Method      string
@@ -31,8 +32,10 @@ type Route struct {
 	HandlerFunc http.HandlerFunc
 }
 
+// Routes is array of entrypoints this api
 type Routes []Route
 
+// NewHandler generates http handler to serve a File
 func NewHandler(config Config) http.Handler {
 	_ = template.BuildTemplates(config.TemplatesPath) // TODO parse error
 
@@ -42,6 +45,7 @@ func NewHandler(config Config) http.Handler {
 	return handlers.RecoveryHandler()(router)
 }
 
+// NewRouter handles function of this api
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {
@@ -61,7 +65,7 @@ func NewRouter() *mux.Router {
 
 var routes = Routes{
 
-	// swagger:operation GET /html-to-pdf HtmlToPdfGet
+	// swagger:operation GET /html-to-pdf HTMLToPdfGet
 	//
 	// Render URL to PDF
 	//
@@ -80,10 +84,10 @@ var routes = Routes{
 	//   '422':
 	//     description: Validation error
 	Route{
-		"HtmlToPdfGet",
+		"HTMLToPdfGet",
 		strings.ToUpper("Get"),
 		"/html-to-pdf",
-		action.HtmlToPdfGet,
+		action.HTMLToPdfGet,
 	},
 
 	// swagger:operation POST /render-template RenderTemplatePost

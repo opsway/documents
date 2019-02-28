@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Server provides new api from config
 func Server(config Config) {
 	log.Printf("Starting the service...")
 
