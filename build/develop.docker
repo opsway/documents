@@ -15,24 +15,21 @@ RUN apk add --update --no-cache \
 # change default shell from ash to bash
 RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
 
-# install swagger tool
-RUN url=$(curl -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | \
-        jq -r '.assets[] | select(.name | contains("'"$(uname | tr '[:upper:]' '[:lower:]')"'_amd64")) | .browser_download_url') && \
-        curl -o /usr/local/bin/swagger -L'#' "${url}" && \
-        chmod +x /usr/local/bin/swagger
-
 # Installs Golang.
 COPY --from=golang /usr/local/go /usr/local/go
 
 ENV \
     LC_ALL=en_US.UTF-8 \
-    PATH=/usr/local/go/bin:$PATH \
+    PATH=/usr/local/go/bin:/go/bin:$PATH \
     GOPATH=/go
-    
-#RUN echo -e "PATH=/usr/local/go/bin:$PATH\nGOPATH=/go" > /etc/profile.d/go.sh
+
+RUN go get -u golang.org/x/lint/golint
+RUN go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
 # Define our workding outside of $GOPATH (we're using go modules).
 WORKDIR /src
+
+ENTRYPOINT ["make"]
 
 ARG BUILD_DATE
 ARG VERSION
