@@ -8,7 +8,7 @@ RUN make entrypoint
 
 FROM ${BASE_IMAGE}
 
-COPY public/ /app/public
+COPY --from=build /src/public/ /app/public
 COPY --from=build /src/entrypoint /app/entrypoint
 
 WORKDIR /app

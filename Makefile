@@ -6,26 +6,21 @@ REGISTRY?=quay.io/opsway
 BIN:=$(shell basename "$(PWD)")
 REPO:=$(REGISTRY)/$(BIN)
 
+SHELL:=/bin/bash
 DATE:=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-GIT_SHA1:=$(shell git log -n 1 --pretty=format:%H)
 VCS_REF:=$(shell git log -n 1 --pretty=format:%H)
 VERSION:=$(shell git describe --tags --always --dirty)
-
-PKGS:= $(shell go list ./...)
 
 DOCKER_CMD:=docker run --rm --interactive --tty --volume $(PWD):/src
 
 WKHTML_IMAGE:=$(REPO):wkhtml
-WKHTML_IMAGE_ALIASE:=$(REPO):wkhtml-alpine
 WKHTML_IMAGE_FILE:=build/wkhtml.docker
 
 IMAGE_BASE:=$(WKHTML_IMAGE)
 BASE_IMAGE:=$(WKHTML_IMAGE)
 
 DEVELOP_IMAGE:=$(REPO):develop
-DEVELOP_IMAGE_ALIASE:=$(REPO):develop-alpine
 DEVELOP_IMAGE_FILE:=build/develop.docker
-DEVELOP_CMD:=$(DOCKER_CMD) $(DEVELOP_IMAGE) bash --login
 
 RELEASE_IMAGE:=$(REPO):$(VERSION)
 RELEASE_IMAGE_ALIASE:=$(REPO):latest
@@ -40,57 +35,56 @@ help: # Output usage documentation
 	@@grep -E '^[a-z\-]+' $(MAKEFILE_LIST)
 	@echo " "
 
-wkhtml: # build wkhtml image
+image-wkhtml: # build wkhtml image
 	docker build \
 		--build-arg BUILD_DATE=$(DATE) \
 		--build-arg VERSION=$(VERSION) \
-		--build-arg VCS_REF=$(GIT_SHA1) \
+		--build-arg VCS_REF=$(VCS_REF) \
 		--tag $(WKHTML_IMAGE) \
-		--tag $(WKHTML_IMAGE_ALIASE) \
-		--file $(WKHTML_IMAGE_FILE) .
+		--file $(WKHTML_IMAGE_FILE) . |& tee image-wkhtml
 
-develop: wkhtml # build develop image
+image-develop: image-wkhtml # build develop image
 	docker build \
 		--build-arg GOLANG_VERSION=$(GOLANG_VERSION) \
 		--build-arg IMAGE_BASE=$(IMAGE_BASE) \
 		--build-arg BUILD_DATE=$(DATE) \
 		--build-arg VERSION=$(VERSION) \
-		--build-arg VCS_REF=$(GIT_SHA1) \
+		--build-arg VCS_REF=$(VCS_REF) \
 		--tag $(DEVELOP_IMAGE) \
-		--tag $(DEVELOP_IMAGE_ALIASE) \
-		--file $(DEVELOP_IMAGE_FILE) .
+		--file $(DEVELOP_IMAGE_FILE) . |& tee image-develop
 
-release: develop # build release image
+image-release: image-develop # build release image
 	docker build \
 		--no-cache \
 		--build-arg DEVELOP_IMAGE=$(DEVELOP_IMAGE) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BUILD_DATE=$(DATE) \
-		--build-arg VCS_REF=$(GIT_SHA1) \
-		--build-arg DOCKERFILE_SHA256=$(RELEASE_IMAGE_FILE_SHA256) \
+		--build-arg VCS_REF=$(VCS_REF) \
 		--tag $(RELEASE_IMAGE) \
 		--tag $(RELEASE_IMAGE_ALIASE) \
 		--file build/release.docker .
 
-test-in-docker: # image-develop # run all tests
-	$(DOCKER_CMD) $(DEVELOP_IMAGE) make test
+run-in-docker: image-develop # run command in docker, use: cmd=<command>
+	$(DOCKER_CMD) $(DEVELOP_IMAGE) $(cmd)
 
 fmt: # gofmt and goimports all go files
 	go fmt ./...
 
-entrypoint: clean docs
+lint:
+	golint ./...
+
+codequality: lint test
+
+entrypoint: codequality docs
 	CGO_ENABLED=0 go build  \
 		-o entrypoint \
 		main.go
 
 test: # run all tests
-	echo "mode: count" > coverage-all.out
-	$(foreach pkg, $(PKGS), \
-		go test -coverprofile=coverage.out -covermode=atomic $(pkg) || exit 1; \
-		tail -n +2 coverage.out >> coverage-all.out; \
-	)
-	go tool cover -html=coverage-all.out -o coverage-all.html
+	go test ./... -coverprofile=coverage.out
+	go tool cover -html=coverage.out -o coverage.html
+	go tool cover -func=coverage.out
 
 clean:
 	rm -fr public/assets
@@ -108,7 +102,7 @@ public/assets: # assets build
 public/index.json: public/assets
 	swagger generate spec --output=public/index.json
 
-docs: public/assets public/index.json
+docs: clean public/assets public/index.json
 
 start:
 	docker run \
@@ -118,13 +112,9 @@ start:
 
 build: entrypoint
 
-publish: release # image publish
-	docker push $(WKHTML_IMAGE)
-	docker push $(WKHTML_IMAGE_ALIASE)
-	docker push $(DEVELOP_IMAGE)
-	docker push $(DEVELOP_IMAGE_ALIASE)
+publish-release: image-release # image publish release image
 	docker push $(RELEASE_IMAGE)
-#	docker push $(RELEASE_IMAGE_ALIASE)
+	docker push $(RELEASE_IMAGE_ALIASE)
 
 say-image-name:
 	@echo "image: $(RELEASE_IMAGE)"

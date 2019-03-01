@@ -14,9 +14,9 @@
 *.out
 
 # build
+image-*
 public/assets
 public/index.json
-server
+entrypoint
 coverage.out
-coverage-all.html
-coverage-all.out
+coverage.html
