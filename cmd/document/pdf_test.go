@@ -19,18 +19,18 @@ func (w BadWriter) Write(p []byte) (n int, err error) {
 
 func TestPdf(t *testing.T) {
 
-	Convey("NewPdf", t, func() {
+	Convey("NewPDF", t, func() {
 		Convey("empty", func() {
 			path := os.Getenv("PATH")
 			os.Setenv("PATH", "")
-			_, err := NewPdf()
+			_, err := NewPDF()
 			os.Setenv("PATH", path)
 			So(err, ShouldBeError, "wkhtmltopdf not found")
 		})
 	})
 
 	Convey("RenderByContent", t, func() {
-		pdf, err := NewPdf()
+		pdf, err := NewPDF()
 		So(err, ShouldBeNil)
 
 		Convey("empty", func() {
@@ -50,7 +50,7 @@ func TestPdf(t *testing.T) {
 
 	Convey("RenderByTemplate", t, func() {
 		_ = template.BuildTemplates("../../testdata/goodTemplates")
-		pdf, _ := NewPdf()
+		pdf, _ := NewPDF()
 		pdf.SetOptions(Document{})
 
 		Convey("error: template", func() {
@@ -61,7 +61,7 @@ func TestPdf(t *testing.T) {
 			So(actual.String(), ShouldBeEmpty)
 		})
 
-		Convey("error: PDF render", func() {
+		Convey("error: PDF Render", func() {
 			actual := new(BadWriter)
 			err := pdf.RenderByTemplate(actual, "foo", template.Context{})
 			So(err, ShouldBeError)
@@ -79,7 +79,7 @@ func TestPdf(t *testing.T) {
 func BenchmarkPdfRenderByContent(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		pdf, _ := NewPdf()
+		pdf, _ := NewPDF()
 		var buf bytes.Buffer
 		_ = pdf.RenderByContent(&buf, "<p>hello</p>")
 	}

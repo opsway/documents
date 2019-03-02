@@ -15,7 +15,7 @@ var templates map[string]*Template
 // Context refers various context of templates
 type Context map[string]interface{}
 
-// Template refers the pongo2 template data
+// Template is structure of template
 type Template struct {
 	path    string
 	name    string
@@ -44,7 +44,7 @@ func (tmpl *Template) load() error {
 	return nil
 }
 
-// NewTemplate generates template specified file path and name
+// NewTemplate make template specified dir path and name of template
 func NewTemplate(path string, name string) (*Template, error) {
 	path = filepath.Join(path, name, "index.html")
 	tmpl := &Template{path: path, name: name}
@@ -68,7 +68,7 @@ func GetTemplate(name string) (*Template, error) {
 	return tmpl, nil
 }
 
-// BuildTemplates makes templates which is specified by file path
+// BuildTemplates makes templates which is specified by dir path
 func BuildTemplates(path string) error {
 	files, err := ioutil.ReadDir(path)
 

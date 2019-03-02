@@ -1,4 +1,4 @@
-package action
+package api
 
 import (
 	"encoding/json"
@@ -7,6 +7,29 @@ import (
 	"github.com/opsway/documents/cmd/document"
 	"github.com/opsway/documents/cmd/template"
 )
+
+// HTMLToPDFGet renders pdf from html
+func HTMLToPDFGet(w http.ResponseWriter, r *http.Request) {
+	content := r.URL.Query().Get("content")
+
+	if content == "" {
+		http.Error(w, "Param 'content' is required", http.StatusBadRequest)
+		return
+	}
+
+	pdf, err := document.NewPDF()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = pdf.RenderByContent(w, content)
+
+	if err != nil {
+		panic(err)
+	}
+}
 
 // RenderTemplateRequest refers request of rendering pdf
 type RenderTemplateRequest struct {
@@ -25,7 +48,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pdf, err := document.NewPdf()
+	pdf, err := document.NewPDF()
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
