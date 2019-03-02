@@ -9,6 +9,15 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func TestServer(t *testing.T) {
+	Convey("Error start server if have bad config", t, func() {
+		err := Server(Config{
+			Address: ":)",
+		})
+		So(err, ShouldBeError)
+	})
+}
+
 func TestApi(t *testing.T) {
 	srv := httptest.NewServer(NewHandler(Config{
 		TemplatesPath: "../testdata/goodTemplates",
