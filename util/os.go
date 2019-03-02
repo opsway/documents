@@ -2,8 +2,8 @@ package util
 
 import "os"
 
-// Getenv returns the environment variables specified key in this machine
-func Getenv(key string, fallback string) string {
+// GetEnv returns the environment variables specified key in this machine
+func GetEnv(key string, fallback string) string {
 	value := os.Getenv(key)
 	if len(value) == 0 {
 		return fallback

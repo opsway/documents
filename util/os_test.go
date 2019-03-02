@@ -7,10 +7,10 @@ import (
 )
 
 func TestOs(t *testing.T) {
-	Convey("Getenv", t, func() {
-		So(Getenv("NO_SET_VAR", "foo"), ShouldEqual, "foo")
+	Convey("GetEnv", t, func() {
+		So(GetEnv("NO_SET_VAR", "foo"), ShouldEqual, "foo")
 		os.Setenv("SET_VAR", "bar")
-		So(Getenv("SET_VAR", "foo"), ShouldEqual, "bar")
+		So(GetEnv("SET_VAR", "foo"), ShouldEqual, "bar")
 	})
 
 	Convey("IsValidDir", t, func() {

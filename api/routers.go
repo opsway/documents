@@ -19,8 +19,6 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	"github.com/opsway/documents/api/action"
-	"github.com/opsway/documents/api/middleware"
 	"github.com/opsway/documents/cmd/template"
 )
 
@@ -51,7 +49,7 @@ func NewRouter() *mux.Router {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc
-		handler = middleware.Logger(handler, route.Name)
+		handler = Logger(handler, route.Name)
 
 		router.
 			Methods(route.Method).
@@ -65,9 +63,9 @@ func NewRouter() *mux.Router {
 
 var routes = Routes{
 
-	// swagger:operation GET /html-to-pdf HTMLToPdfGet
+	// swagger:operation GET /html-to-pdf HTMLToPDFGet
 	//
-	// Render URL to PDF
+	// render URL to PDF
 	//
 	// ---
 	// produces:
@@ -84,15 +82,15 @@ var routes = Routes{
 	//   '422':
 	//     description: Validation error
 	Route{
-		"HTMLToPdfGet",
+		"HTMLToPDFGet",
 		strings.ToUpper("Get"),
 		"/html-to-pdf",
-		action.HTMLToPdfGet,
+		HTMLToPDFGet,
 	},
 
 	// swagger:operation POST /render-template RenderTemplatePost
 	//
-	// Render template to PDF
+	// render template to PDF
 	//
 	// ---
 	// produces:
@@ -119,6 +117,6 @@ var routes = Routes{
 		"RenderTemplatePost",
 		strings.ToUpper("Post"),
 		"/render-template",
-		action.RenderTemplate,
+		RenderTemplate,
 	},
 }

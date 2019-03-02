@@ -7,8 +7,8 @@ import (
 
 func main() {
 	api.Server(api.Config{
-		Address:       util.Getenv("DOCUMENTS_ADDRESS", ":8515"),
-		TemplatesPath: util.Getenv("DOCUMENTS_TEMPLATES", "./templates"),
-		PublicPath:    util.Getenv("DOCUMENTS_PUBLIC_PATH", "./public"),
+		Address:       util.GetEnv("DOCUMENTS_ADDRESS", ":8515"),
+		TemplatesPath: util.GetEnv("DOCUMENTS_TEMPLATES", "./templates"),
+		PublicPath:    util.GetEnv("DOCUMENTS_PUBLIC_PATH", "./public"),
 	})
 }
