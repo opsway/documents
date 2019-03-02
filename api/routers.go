@@ -33,7 +33,7 @@ type Route struct {
 // Routes is array of entrypoints this api
 type Routes []Route
 
-// NewHandler generates http handler to serve a File
+// NewHandler generates HTTP handler to serve api
 func NewHandler(config Config) http.Handler {
 	_ = template.BuildTemplates(config.TemplatesPath) // TODO parse error
 
@@ -43,7 +43,7 @@ func NewHandler(config Config) http.Handler {
 	return handlers.RecoveryHandler()(router)
 }
 
-// NewRouter handles function of this api
+// NewRouter handles function of api
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {

@@ -1,15 +1,12 @@
 package api
 
 import (
-	"log"
 	"net/http"
 	"time"
 )
 
 // Server provides new api from config
-func Server(config Config) {
-	log.Printf("Starting the service...")
-
+func Server(config Config) error {
 	handler := NewHandler(config)
 
 	srv := &http.Server{
@@ -19,6 +16,5 @@ func Server(config Config) {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Printf("The service is ready to listen on %v", config.Address)
-	log.Fatal(srv.ListenAndServe())
+	return srv.ListenAndServe()
 }
