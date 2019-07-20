@@ -37,6 +37,15 @@ func TestApi(t *testing.T) {
 			So(resp.StatusCode, ShouldEqual, http.StatusOK)
 			So(resp.Header.Get("Content-Type"), ShouldEqual, "application/pdf")
 		})
+
+		Convey("Got PDF by request body", func() {
+			data := []byte(`<html><body><h1>test</h2></body></html>`)
+			bodyReader := bytes.NewReader(data)
+			resp, err := http.Post(srv.URL+"/body-to-pdf", "text/html", bodyReader)
+			So(err, ShouldBeNil)
+			So(resp.StatusCode, ShouldEqual, http.StatusOK)
+			So(resp.Header.Get("Content-Type"), ShouldEqual, "application/pdf")
+		})
 	})
 
 	Convey("PDF from template", t, func() {
