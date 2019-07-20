@@ -39,9 +39,9 @@ git push origin my-new-feature
 Run all tests:
 
 ```bash
-make test
+make codequality
 # or
-make test-in-docker
+make run-in-docker cmd="make codequality"
 ```
 
 ## Reporting bugs and feature request

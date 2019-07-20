@@ -11,7 +11,7 @@ stages:
 jobs:
   include:
     - stage: qa
-      script: make run-in-docker cmd=codequality
+      script: make run-in-docker cmd="make codequality"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
