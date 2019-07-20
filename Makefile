@@ -26,6 +26,7 @@ RELEASE_IMAGE:=$(REPO):$(VERSION)
 RELEASE_IMAGE_ALIASE:=$(REPO):latest
 
 .DEFAULT_GOAL:=help
+.PHONY: image-wkhtml image-develop image-release
 
 help: # Output usage documentation
 	@echo "Usage: make <target>"
