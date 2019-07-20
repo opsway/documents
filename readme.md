@@ -17,7 +17,11 @@ Open a terminal and run the following command:
     docker run --rm -p 8515:8515 -v template:/app/templates quay.io/opsway/documents
  
 The API is now available on your host at `http://localhost:8515`.
-  
+
+<p align="center">
+    <img src="https://github.com/opsway/documents/raw/master/docs/swagger.png" alt="demo swagger docs" />
+</p>
+
 ## Build
 
     make build
