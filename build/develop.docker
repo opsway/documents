@@ -23,7 +23,9 @@ ENV \
     PATH=/usr/local/go/bin:/go/bin:$PATH \
     GOPATH=/go
 
-RUN go get -u golang.org/x/lint/golint
+RUN go get -u github.com/gojp/goreportcard/cmd/goreportcard-cli ;\
+    cd /go/src/github.com/gojp/goreportcard ;\
+    make install    
 RUN go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
 # Define our workding outside of $GOPATH (we're using go modules).
