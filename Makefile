@@ -72,7 +72,7 @@ fmt: # gofmt and goimports all go files
 	go fmt ./...
 
 lint:
-	golint ./...
+	goreportcard-cli -v -t 100
 
 codequality: lint test
 
