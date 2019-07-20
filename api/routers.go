@@ -88,6 +88,29 @@ var routes = Routes{
 		HTMLToPDFGet,
 	},
 
+	// swagger:operation POST /body-to-pdf BodyToPDFPost
+	//
+	// render request body to PDF
+	//
+	// ---
+	// produces:
+	// - application/pdf
+	// requestBody:
+	//   text/html:
+	//     schema:
+	//     type: string
+	// responses:
+	//   '200':
+	//     description: A PDF file
+	//   '422':
+	//     description: Validation error
+	Route{
+		"BodyToPDFPost",
+		strings.ToUpper("Post"),
+		"/body-to-pdf",
+		BodyToPDFPost,
+	},
+
 	// swagger:operation POST /render-template RenderTemplatePost
 	//
 	// render template to PDF

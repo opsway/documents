@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"io/ioutil"
 
 	"github.com/opsway/documents/cmd/document"
 	"github.com/opsway/documents/cmd/template"
@@ -16,6 +17,35 @@ func HTMLToPDFGet(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Param 'content' is required", http.StatusBadRequest)
 		return
 	}
+
+	pdf, err := document.NewPDF()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = pdf.RenderByContent(w, content)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+// BodyToPDFPost renders pdf from request's HTTP body
+func BodyToPDFPost(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Failed to read a request body", http.StatusBadRequest)
+		return
+	}
+
+	if body == nil {
+		http.Error(w, "Request body is empty", http.StatusBadRequest)
+		return
+	}
+
+	content := string(body)
 
 	pdf, err := document.NewPDF()
 
