@@ -9,8 +9,12 @@ RUN apk add --update --no-cache \
         bash \
         curl \
         gawk \
-        jq \
         git
+RUN set -xe ;\
+    repo="stedolan/jq" ;\
+    version=$(curl -fsL "https://api.github.com/repos/${repo}/releases/latest" | grep tag_name | cut -d"\"" -f4) ;\
+    curl -fsL "https://github.com/${repo}/releases/download/${version}/jq-linux64" >/usr/local/bin/jq ;\
+    chmod +x /usr/local/bin/jq
 
 # change default shell from ash to bash
 RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
