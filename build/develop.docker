@@ -31,8 +31,6 @@ RUN go get -u github.com/go-swagger/go-swagger/cmd/swagger
 # Define our workding outside of $GOPATH (we're using go modules).
 WORKDIR /src
 
-ENTRYPOINT ["make"]
-
 ARG BUILD_DATE
 ARG VERSION
 ARG VCS_REF

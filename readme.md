@@ -24,7 +24,7 @@ The API is now available on your host at `http://localhost:8515`.
 
 ## Build
 
-    make build
+    make image-release
   
 ## Badges
 
