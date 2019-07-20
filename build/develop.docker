@@ -3,6 +3,13 @@ ARG IMAGE_BASE
 FROM golang:${GOLANG_VERSION}-alpine AS golang
 FROM ${IMAGE_BASE}
 
+# Installs Golang.
+COPY --from=golang /usr/local/go /usr/local/go
+
+ENV LC_ALL=en_US.UTF-8
+ENV PATH=/usr/local/go/bin:/go/bin:$PATH
+ENV GOPATH=/go
+
 # Libraries used in the build process of this image.
 RUN apk add --update --no-cache \
         build-base \
@@ -18,14 +25,6 @@ RUN set -xe ;\
 
 # change default shell from ash to bash
 RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
-
-# Installs Golang.
-COPY --from=golang /usr/local/go /usr/local/go
-
-ENV \
-    LC_ALL=en_US.UTF-8 \
-    PATH=/usr/local/go/bin:/go/bin:$PATH \
-    GOPATH=/go
 
 RUN go get -u github.com/go-swagger/go-swagger/cmd/swagger ;\
     go get -u github.com/gojp/goreportcard/cmd/goreportcard-cli ;\
