@@ -1,4 +1,4 @@
-GOLANG_VERSION?=1.11.5
+GOLANG_VERSION?=1.11.12
 SWAGGER_UI_VERSION?=3.20.6
 SWAGGER_UI_DIST_URL?=https://raw.githubusercontent.com/swagger-api/swagger-ui/v$(SWAGGER_UI_VERSION)/dist
 REGISTRY?=quay.io/opsway
@@ -65,7 +65,7 @@ image-release: image-develop # build release image
 		--tag $(RELEASE_IMAGE_ALIASE) \
 		--file build/release.docker .
 
-run-in-docker: image-develop # run command in docker, use: cmd=<command>
+run-in-docker: # run command in docker, use: cmd=<command>
 	$(DOCKER_CMD) $(DEVELOP_IMAGE) $(cmd)
 
 fmt: # gofmt and goimports all go files
@@ -116,8 +116,14 @@ publish-release: image-release # image publish release image
 	docker push $(RELEASE_IMAGE)
 	docker push $(RELEASE_IMAGE_ALIASE)
 
+publish-develop: image-wkhtml image-develop
+	docker push $(DEVELOP_IMAGE)
+	docker push $(WKHTML_IMAGE)
+
 say-image-name:
-	@echo "image: $(RELEASE_IMAGE)"
+	@echo "wkhtml: $(WKHTML_IMAGE)"
+	@echo "develop: $(DEVELOP_IMAGE)"
+	@echo "release: $(RELEASE_IMAGE)"
 
 say-image-labels:
 	@docker inspect \
