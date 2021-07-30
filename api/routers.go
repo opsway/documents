@@ -119,4 +119,18 @@ var routes = Routes{
 		"/render-template",
 		RenderTemplate,
 	},
+
+	Route{
+		"RenderTemplateWithData",
+		strings.ToUpper("Get"),
+		"/render-data",
+		RenderTemplateWithData,
+	},
+
+	Route{
+		"RenderTemplatePostData",
+		strings.ToUpper("Post"),
+		"/render-post-data",
+		RenderTemplatePostData,
+	},
 }

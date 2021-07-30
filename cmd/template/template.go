@@ -44,12 +44,36 @@ func (tmpl *Template) load() error {
 	return nil
 }
 
+func (tmpl *Template) loadFromString(content string) error {
+	templContent, err := pongo2.FromString(content)
+
+	if err != nil {
+		return err
+	}
+
+	tmpl.index = templContent
+
+	return nil
+}
+
 // NewTemplate make template specified dir path and name of template
 func NewTemplate(path string, name string) (*Template, error) {
 	path = filepath.Join(path, name, "index.html")
 	tmpl := &Template{path: path, name: name}
 
 	err := tmpl.load()
+	if err != nil {
+		return nil, err
+	}
+
+	return tmpl, nil
+}
+
+// NewVirtualTemplate make template from specified string
+func NewVirtualTemplate(content string) (*Template, error) {
+	tmpl := &Template{path: "", name: "virtual"}
+
+	err := tmpl.loadFromString(content)
 	if err != nil {
 		return nil, err
 	}

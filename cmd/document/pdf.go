@@ -84,6 +84,30 @@ func (pdf *PDF) RenderByTemplate(writer io.Writer, templateName string, data tem
 	return pdf.Render(writer)
 }
 
+// RenderByVirtualTemplate creates PDF from specified template content and data to writer
+func (pdf *PDF) RenderByVirtualTemplate(writer io.Writer, templateContent string, data template.Context) error {
+	tmpl, err := template.NewVirtualTemplate(templateContent)
+
+	if err != nil {
+		return err
+	}
+
+	var input io.Reader
+	var buf bytes.Buffer
+
+	err = tmpl.Render(data, &buf)
+
+	if err != nil {
+		return err
+	}
+
+	input = &buf
+
+	pdf.AddPage(input)
+
+	return pdf.Render(writer)
+}
+
 // NewPDF return PDF generator
 func NewPDF() (*PDF, error) {
 	PDFGen, err := generator.NewPDFGenerator()
