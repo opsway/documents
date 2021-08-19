@@ -1,19 +1,35 @@
-apiVersion: extensions/v1beta1
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
   name: documents
+  labels:
+    app.kubernetes.io/name: documents
+  annotations:
+  {{- with .Values.ingress.annotations }}  
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
   rules:
-    - host: {{ .Values.host }}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
       http:
         paths:
-          - backend:
+          {{- range .paths }}
+          - path: {{ . }}
+            backend:
               serviceName: documents
               servicePort: 8515
-            path: /
-  tls:
-    - hosts:
-        - {{ .Values.host }}
-      secretName: esb-cert
+          {{- end }}
+    {{- end }}
+  {{- end }}
