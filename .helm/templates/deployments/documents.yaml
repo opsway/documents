@@ -22,16 +22,9 @@ spec:
       {{- end }}
       containers:
         - name: "documents"
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: documents
               containerPort: 8515
               protocol: TCP
-            
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecret.name }}

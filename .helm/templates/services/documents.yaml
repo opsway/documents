@@ -1,15 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "documents"
   labels:
-    {{- include "documents.labels" . | nindent 4 }}
+    app.kubernetes.io/name: documents
+  name: documents
 spec:
-  type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: documents
+    - name: http
+      port: 8515
       protocol: TCP
-      name: documents
+      targetPort: 8515
   selector:
-    {{- include "documents.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: documents
+  sessionAffinity: None
+  type: ClusterIP
