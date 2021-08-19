@@ -1,5 +1,7 @@
 module github.com/opsway/documents
 
+go 1.15
+
 require (
 	github.com/SebastiaanKlippert/go-wkhtmltopdf v1.4.0
 	github.com/flosch/pongo2 v0.0.0-20181225140029-79872a7b2769
