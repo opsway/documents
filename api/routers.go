@@ -119,4 +119,30 @@ var routes = Routes{
 		"/render-template",
 		RenderTemplate,
 	},
+
+	// swagger:operation POST /render-post-template RenderPdfWithPostTemplateData
+	//
+	// render template with data to PDF use base64 encoded data
+	//
+	// ---
+	// produces:
+	// - application/pdf
+	// responses:
+	//   '200':
+	//     description: A PDF file
+	//   '422':
+	//     description: Validation error
+	Route{
+		"RenderPdfWithPostTemplateData",
+		strings.ToUpper("Post"),
+		"/render-post-template",
+		RenderPdfWithPostTemplateData,
+	},
+
+	Route{
+		"RenderPdfWithPostTemplateOptions",
+		strings.ToUpper("Options"),
+		"/render-post-template",
+		RenderPdfWithPostTemplateOptions,
+	},
 }

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "documents"
+  labels:
+    {{- include "documents.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: documents
+      protocol: TCP
+      name: documents
+  selector:
+    {{- include "documents.selectorLabels" . | nindent 4 }}
