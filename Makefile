@@ -1,4 +1,4 @@
-GOLANG_VERSION?=1.11.12
+GOLANG_VERSION?=1.16.7
 SWAGGER_UI_VERSION?=3.20.6
 SWAGGER_UI_DIST_URL?=https://raw.githubusercontent.com/swagger-api/swagger-ui/v$(SWAGGER_UI_VERSION)/dist
 REGISTRY?=quay.io/opsway
@@ -93,11 +93,11 @@ clean:
 
 public/assets: # assets build
 	mkdir -p public/assets
-	curl $(SWAGGER_UI_DIST_URL)/favicon-16x16.png --output public/assets/favicon-16x16.png
-	curl $(SWAGGER_UI_DIST_URL)/favicon-32x32.png --output public/assets/favicon-32x32.png
-	curl $(SWAGGER_UI_DIST_URL)/swagger-ui.css --output public/assets/swagger-ui.css
-	curl $(SWAGGER_UI_DIST_URL)/swagger-ui-bundle.js --output public/assets/swagger-ui-bundle.js
-	curl $(SWAGGER_UI_DIST_URL)/swagger-ui-standalone-preset.js --output public/assets/swagger-ui-standalone-preset.js
+	curl $(SWAGGER_UI_DIST_URL)/favicon-16x16.png --output public/assets/favicon-16x16.png --silent
+	curl $(SWAGGER_UI_DIST_URL)/favicon-32x32.png --output public/assets/favicon-32x32.png --silent
+	curl $(SWAGGER_UI_DIST_URL)/swagger-ui.css --output public/assets/swagger-ui.css --silent
+	curl $(SWAGGER_UI_DIST_URL)/swagger-ui-bundle.js --output public/assets/swagger-ui-bundle.js --silent
+	curl $(SWAGGER_UI_DIST_URL)/swagger-ui-standalone-preset.js --output public/assets/swagger-ui-standalone-preset.js --silent
 
 public/index.json: public/assets
 	swagger generate spec --output=public/index.json

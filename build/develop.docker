@@ -27,11 +27,14 @@ RUN set -xe ;\
 RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
 
 RUN go get -u github.com/go-swagger/go-swagger/cmd/swagger ;\
-    go get -u github.com/gojp/goreportcard/cmd/goreportcard-cli ;\
+    go get -u github.com/gordonklaus/ineffassign ;\
+    go get -u github.com/client9/misspell/cmd/misspell ;\
+    git clone https://github.com/gojp/goreportcard.git /go/src/github.com/gojp/goreportcard ;\
     cd /go/src/github.com/gojp/goreportcard ;\
-    make install    
+    make install ;\
+    go install ./cmd/goreportcard-cli
 
-# Define our workding outside of $GOPATH (we're using go modules).
+# Define our working outside of $GOPATH (we're using go modules).
 WORKDIR /src
 
 ARG BUILD_DATE
