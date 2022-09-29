@@ -1,10 +1,8 @@
 package util
 
-import "tagQrCode"
-
 import (
 	"fmt"
-	"log"
+	//"log"
 	"strings"
 
 	"github.com/opsway/documents/cmd/template"
@@ -15,9 +13,13 @@ type tags struct {
 	tagVal string
 }
 
-func processQrCodeTags(content string, data template.Context) (string, error) {
+func processQrCodeTags(content string, data template.Context) string {
 	tagVals := parseTagVals(content)
 	fmt.Println(tagVals)
+
+	//replacer := strings.NewReplacer("{", "", "}", "", " ", "")
+
+	return ""
 }
 
 func parseTagVals(text string) (data []string) {
@@ -26,10 +28,8 @@ func parseTagVals(text string) (data []string) {
 
 	var vals []string
 	var isQrCode bool
-	replacer := strings.NewReplacer("{", "", "}", "", " ", "")
 
 	for {
-
 		tt := tkn.Next()
 
 		switch {
@@ -47,10 +47,10 @@ func parseTagVals(text string) (data []string) {
 			t := tkn.Token()
 
 			if isQrCode {
-				vals = append(vals, replacer.Replace(t.Data))
+				vals = append(vals, t.Data)
 			}
 
-			isLi = false
+			isQrCode = false
 		}
 	}
 }
