@@ -86,7 +86,8 @@ func (pdf *PDF) RenderByTemplate(writer io.Writer, templateName string, data tem
 
 // RenderByVirtualTemplate creates PDF from specified template content and data to writer
 func (pdf *PDF) RenderByVirtualTemplate(writer io.Writer, templateContent string, data template.Context) error {
-	tmpl, err := template.NewVirtualTemplate(templateContent)
+	parsedTemplateContent := util.ProcessQrCodeTags(templateContent, data)
+	tmpl, err := template.NewVirtualTemplate(parsedTemplateContent)
 
 	if err != nil {
 		return err

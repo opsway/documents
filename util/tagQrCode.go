@@ -1,11 +1,12 @@
 package util
 
 import (
-	"fmt"
-	//"log"
+	//"fmt"
+	"encoding/base64"
 	"strings"
 
 	"github.com/opsway/documents/cmd/template"
+	qrcode "github.com/skip2/go-qrcode"
 	"golang.org/x/net/html"
 )
 
@@ -13,13 +14,22 @@ type tags struct {
 	tagVal string
 }
 
-func processQrCodeTags(content string, data template.Context) string {
+func ProcessQrCodeTags(content string, data template.Context) string {
 	tagVals := parseTagVals(content)
-	fmt.Println(tagVals)
 
-	//replacer := strings.NewReplacer("{", "", "}", "", " ", "")
+	replacer := strings.NewReplacer("{", "", "}", "", " ", "")
+	for _, element := range tagVals {
+		dataProperty := replacer.Replace(element)
+		qrCodeImg := ""
 
-	return ""
+		if data[dataProperty] != nil && data[dataProperty] != "" {
+			qrCodeImg = createQrCodeImage(data[dataProperty].(string))
+		}
+
+		content = strings.ReplaceAll(content, "<qrcode>"+element+"</qrcode>", qrCodeImg)
+	}
+
+	return content
 }
 
 func parseTagVals(text string) (data []string) {
@@ -40,7 +50,7 @@ func parseTagVals(text string) (data []string) {
 		case tt == html.StartTagToken:
 
 			t := tkn.Token()
-			isQrCode = t.Data == "qrCode"
+			isQrCode = t.Data == "qrcode"
 
 		case tt == html.TextToken:
 
@@ -53,4 +63,13 @@ func parseTagVals(text string) (data []string) {
 			isQrCode = false
 		}
 	}
+}
+
+func createQrCodeImage(text string) string {
+	png, err := qrcode.Encode(text, qrcode.Medium, 256)
+	if err != nil {
+		return ""
+	}
+
+	return "<img class=\"qrCode\" alt=\"QR Code\" src=\"data:image/png;base64," + base64.StdEncoding.EncodeToString(png) + "\"/>"
 }
